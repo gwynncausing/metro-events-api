@@ -10,6 +10,7 @@ const initializeData = require("./controller/initializations/data");
 const auth = require("./controller/auth/auth");
 const user = require("./controller/user/user");
 const request = require("./controller/request/request");
+const event = require("./controller/event/event");
 
 app.use(bodyParser.json());
 
@@ -39,6 +40,7 @@ app.get("/init", async (req, res) => {
 app.use("/", auth);
 app.use("/user", user);
 app.use("/request", request);
+app.use("/event", event);
 
 const port = 8081;
 

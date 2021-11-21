@@ -93,7 +93,7 @@ const user_review = async (db) => {
       table.integer("review_id").unsigned().notNullable();
 
       table.foreign("user_id").references("user_id").inTable("user");
-      table.foreign("event_id").references("event_id").inTable("event");
+      table.foreign("event_id").references("event_id").inTable("events");
       table.foreign("review_id").references("review_id").inTable("review");
 
       table.timestamps();
@@ -101,8 +101,9 @@ const user_review = async (db) => {
     .then(() => {
       result = "OK";
     })
-    .catch(() => {
+    .catch((err) => {
       result = "NOT OK";
+      console.log(err);
     });
   return result;
 };
@@ -118,7 +119,7 @@ const organizer_events = async (db) => {
       table.integer("event_id").unsigned().notNullable();
 
       table.foreign("user_id").references("user_id").inTable("user");
-      table.foreign("event_id").references("event_id").inTable("event");
+      table.foreign("event_id").references("event_id").inTable("events");
 
       table.timestamps();
     })
@@ -144,7 +145,31 @@ const request = async (db) => {
       table.string("request_status");
 
       table.foreign("user_id").references("user_id").inTable("user");
-      table.foreign("event_id").references("event_id").inTable("event");
+      table.foreign("event_id").references("event_id").inTable("events");
+
+      table.timestamps();
+    })
+    .then(() => {
+      result = "OK";
+    })
+    .catch((err) => {
+      result = "NOT OK";
+    });
+  return result;
+};
+
+const event_user = async (db) => {
+  let result = "";
+
+  await db.schema
+    .createTable("event_user", function (table) {
+      table.increments("event_user_id");
+
+      table.integer("user_id").unsigned().notNullable();
+      table.integer("event_id").unsigned().notNullable();
+
+      table.foreign("user_id").references("user_id").inTable("user");
+      table.foreign("event_id").references("event_id").inTable("events");
 
       table.timestamps();
     })
@@ -165,6 +190,7 @@ const init = async (db) => {
   const _user_review = await user_review(db);
   const _organizer_events = await organizer_events(db);
   const _request = await request(db);
+  const _event_user = await event_user(db);
   const data = {
     role: _role,
     user: _user,
@@ -173,6 +199,7 @@ const init = async (db) => {
     user_review: _user_review,
     organizer_events: _organizer_events,
     request: _request,
+    event_user: _event_user,
   };
   return data;
 };
